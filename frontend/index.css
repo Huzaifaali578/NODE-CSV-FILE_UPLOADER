@@ -1,0 +1,122 @@
+/* Dark theme background */
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Headings and Titles */
+h1,
+h5 {
+  color: #ffcc00;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Upload form and buttons */
+.form-control,
+.btn {
+  border-radius: 50px;
+}
+
+.btn {
+  background: linear-gradient(135deg, #ff4081, #ffcc00);
+  border: none;
+  color: #121212;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.btn:hover {
+  transform: translateY(-5px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* File Input */
+input[type="file"] {
+  background-color: #2e2e2e;
+  color: #ffcc00;
+  border: 2px solid #ffcc00;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* Uploaded files table */
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #ffcc00;
+  color: #121212;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+th,
+td {
+  padding: 15px;
+  text-align: left;
+}
+
+tbody tr {
+  background-color: #2e2e2e;
+  border-bottom: 2px solid #121212;
+  transition: background-color 0.3s ease;
+}
+
+tbody tr:hover {
+  background-color: #ff4081;
+}
+
+/* Action buttons (View & Delete) */
+.action-btn {
+  border: none;
+  border-radius: 50px;
+  padding: 5px 15px;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-view {
+  background-color: #00bcd4;
+  color: #121212;
+}
+
+.btn-delete {
+  background-color: #ff4081;
+  color: #121212;
+}
+
+.btn-view:hover,
+.btn-delete:hover {
+  opacity: 0.8;
+}
+
+/* Hide uploaded files section initially */
+#upload-section {
+  display: none;
+}
