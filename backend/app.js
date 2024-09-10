@@ -2,6 +2,7 @@ import "../env.js";
 import express from "express";
 import path from "path";
 import csvRouter from "./router/csv.routes.js";
+import fs from 'fs';
 
 const app = express();
 
@@ -37,5 +38,19 @@ app.get('/view', (req, res) => {
         // Pass any necessary data here
     });
 });
+
+app.get('/download/:fileName', (req, res) => {
+    const fileName = req.params.fileName;
+    const filePath = path.join(__dirname, 'uploads', fileName);
+
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+        res.download(filePath);
+    } else {
+        res.status(404).send('File not found');
+    }
+});
+
+
 
 export default app;
