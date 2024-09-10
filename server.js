@@ -1,5 +1,5 @@
-import app from "./beckend/app.js"
-import connectToDB from "./beckend/config/db.js"
+import app from "./backend/app.js"
+import connectToDB from "./backend/config/db.js"
 
 const port = process.env.PORT | 3000
 app.listen(port, async () => {
