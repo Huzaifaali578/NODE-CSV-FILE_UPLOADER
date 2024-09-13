@@ -42,7 +42,10 @@ app.get('/view', (req, res) => {
 
 app.get('/download/:fileName', (req, res) => {
     const fileName = req.params.fileName;
+    console.log(fileName)
     const filePath = path.join(__dirname, 'uploads', fileName);
+    console.log(filePath)
+
 
     // Check if the file exists
     if (fs.existsSync(filePath)) {
