@@ -1,7 +1,12 @@
 import uploadModel from "../model/csv.model.js";
 import fs from "fs"
-import path from "path";
 import csvParser from "csv-parser";
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 export default class csvController {
     constructor() {
