@@ -55,20 +55,24 @@ export default class csvController {
             // Delete the file from the database
             await uploadModel.findByIdAndDelete(fileId);
 
-            // Construct the file path
-            const filePath = path.join('uploads', file.filename);
+            const filePath = path.join(__dirname, 'uploads', file.filename);
 
-            // Delete the file from the filesystem
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    console.error('Error deleting file from filesystem:', err);
-                    return res.status(500).json({ error: 'Error deleting file from filesystem' });
-                }
+            // Check if the file exists before trying to delete it
+            if (fs.existsSync(filePath)) {
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting file from filesystem:', err);
+                        return res.status(500).json({ error: 'Error deleting file from filesystem' });
+                    }
 
-                // Successfully deleted
-                console.log('File deleted successfully:', filePath);
-                res.json({ message: 'File deleted successfully' });
-            });
+                    console.log('File deleted successfully:', filePath);
+                    res.json({ message: 'File deleted successfully' });
+                });
+            } else {
+                console.log('File not found in the filesystem:', filePath);
+                res.status(404).json({ error: 'File not found in the filesystem' });
+            }
+
         } catch (err) {
             console.error('Error deleting file:', err);
             res.status(400).send('Error deleting file');
@@ -80,16 +84,19 @@ export default class csvController {
             const id = req.query.id;
             // Get the search query from the URL query parameters
             const searchQuery = req.query.q;
-            
+
             // Find the file by its ID
             const file = await uploadModel.findById(id);
             if (!file) {
                 return res.status(404).send('File not found');
             }
-    
-            const filePath = file.path; // Use the file's path directly
-    
             const results = [];
+
+            const filePath = path.join(__dirname, 'uploads', file.filename);
+            if (!fs.existsSync(filePath)) {
+                return res.status(404).send('File not found');
+            }
+
             fs.createReadStream(filePath)
                 .pipe(csvParser())
                 .on('data', (data) => {
@@ -99,39 +106,23 @@ export default class csvController {
                     if (results.length === 0) {
                         return res.status(404).send("No data found in the CSV file");
                     }
-    
-                    const tableHeaders = Object.keys(results[0]);
-                    let tableRows = results;
-    
-                    // Apply the search filter if a search query is present
-                    if (searchQuery) {
-                        tableRows = tableRows.filter((row) =>
-                            Object.values(row).some((value) =>
-                                value.toLowerCase().includes(searchQuery.toLowerCase())
-                            )
-                        );
-                    }
-    
-                    // Render the view with the parsed CSV data
                     res.render('view', {
-                        title: file.filename, // Set the title to the original filename
-                        file: file, // Pass the file object
-                        searchQuery: searchQuery || '', // Pass the search query from the request
-                        tableHeaders: tableHeaders, // Pass the table headers
-                        tableRows: tableRows, // Pass the table rows (filtered if search query present)
-                        csvData: results, // Pass the entire CSV data
+                        title: file.filename,
+                        file: file,
+                        tableHeaders: Object.keys(results[0]),
+                        tableRows: results,
+                        searchQuery: searchQuery || '',
                     });
                 })
                 .on("error", (error) => {
                     console.error("CSV parsing error:", error);
                     res.status(500).send("Error parsing CSV file");
                 });
-    
         } catch (err) {
             console.error(err);
             res.status(400).send('Error reading file');
         }
     }
-    
+
 
 }
