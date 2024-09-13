@@ -7,6 +7,7 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 export default class csvController {
     constructor() {
         this.uploadModel = uploadModel;
@@ -14,33 +15,35 @@ export default class csvController {
 
     async uploadCsv(req, res, next) {
         try {
-            // Check if file is uploaded
             if (!req.file) {
                 return res.status(400).send("No file uploaded");
             }
 
             const { filename, path: filePath, size } = req.file;
-            
-            // Create new CSV file object in the database
+
+            // Save new CSV file to the database
             const newUpload = new this.uploadModel({ filename, filePath, size });
             await newUpload.save();
 
             console.log("File uploaded successfully");
-            res.redirect('/home');
+            return res.redirect('/home');
         } catch (err) {
             console.error("Error uploading file:", err);
-            res.status(400).send("Error uploading file");
+            if (!res.headersSent) {
+                return res.status(400).send("Error uploading file");
+            }
         }
     }
 
     async getUploadFiles(req, res, next) {
         try {
-            // Get all the files from the database
             const files = await this.uploadModel.find({}, { filename: 1, filePath: 1, size: 1 });
             return res.status(200).json(files);
         } catch (err) {
             console.error("Error fetching files:", err);
-            res.status(500).send("Failed to fetch uploaded files");
+            if (!res.headersSent) {
+                return res.status(500).send("Failed to fetch uploaded files");
+            }
         }
     }
 
@@ -56,27 +59,35 @@ export default class csvController {
 
             const filePath = path.join(__dirname, 'uploads', file.filename);
 
-            // Check if file exists in the filesystem
+            // Check if the file exists
             if (fs.existsSync(filePath)) {
-                // Remove file from filesystem
+                // Remove the file from the filesystem
                 fs.unlink(filePath, async (err) => {
                     if (err) {
-                        console.error("Error deleting file from filesystem:", err);
-                        return res.status(500).json({ error: 'Error deleting file from filesystem' });
+                        console.error("Error deleting file:", err);
+                        if (!res.headersSent) {
+                            return res.status(500).json({ error: 'Error deleting file' });
+                        }
                     }
 
-                    // Remove file from the database
+                    // Delete the file from the database
                     await this.uploadModel.findByIdAndDelete(fileId);
                     console.log('File deleted successfully:', filePath);
-                    res.json({ message: 'File deleted successfully' });
+                    if (!res.headersSent) {
+                        return res.json({ message: 'File deleted successfully' });
+                    }
                 });
             } else {
                 console.log('File not found in the filesystem:', filePath);
-                res.status(404).json({ error: 'File not found in the filesystem' });
+                if (!res.headersSent) {
+                    return res.status(404).json({ error: 'File not found in the filesystem' });
+                }
             }
         } catch (err) {
             console.error("Error deleting file:", err);
-            res.status(500).send("Error deleting file");
+            if (!res.headersSent) {
+                return res.status(500).send("Error deleting file");
+            }
         }
     }
 
@@ -91,12 +102,12 @@ export default class csvController {
                 return res.status(404).send("File not found");
             }
 
-            const results = [];
             const filePath = path.join(__dirname, 'uploads', file.filename);
-
             if (!fs.existsSync(filePath)) {
                 return res.status(404).send("File not found in the filesystem");
             }
+
+            const results = [];
 
             // Stream and parse the CSV file
             fs.createReadStream(filePath)
@@ -107,8 +118,7 @@ export default class csvController {
                         return res.status(404).send("No data found in the CSV file");
                     }
 
-                    // Render the view with CSV data
-                    res.render('view', {
+                    return res.render('view', {
                         title: file.filename,
                         file: file,
                         tableHeaders: Object.keys(results[0]),
@@ -118,11 +128,15 @@ export default class csvController {
                 })
                 .on('error', (error) => {
                     console.error("CSV parsing error:", error);
-                    res.status(500).send("Error parsing CSV file");
+                    if (!res.headersSent) {
+                        return res.status(500).send("Error parsing CSV file");
+                    }
                 });
         } catch (err) {
             console.error("Error reading file:", err);
-            res.status(400).send("Error reading file");
+            if (!res.headersSent) {
+                return res.status(400).send("Error reading file");
+            }
         }
     }
 }
