@@ -3,6 +3,7 @@ import express from "express";
 import path from "path";
 import csvRouter from "./router/csv.routes.js";
 import fs from 'fs';
+import { fileURLToPath } from "url";
 
 const app = express();
 
@@ -41,6 +42,10 @@ app.get('/view', (req, res) => {
 
 app.get('/download/:fileName', (req, res) => {
     const fileName = req.params.fileName;
+    // Create __dirname equivalent to ES module.
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+
     const filePath = path.join(__dirname, 'uploads', fileName);
 
     // Check if the file exists

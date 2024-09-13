@@ -358,7 +358,15 @@
             renderPagination(); // Re-render the pagination and table rows
           }
         });
-        
+      // Downloading Functionality.
+      document
+        .getElementById("downloadButton")
+        .addEventListener("click", () => {
+          const fileName = document
+            .getElementById("downloadButton")
+            .getAttribute("data-file");
+          window.location.href = `/download/${fileName}`; // Trigger the download
+        });
     </script>
   </body>
 </html>
