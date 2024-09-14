@@ -2,6 +2,7 @@ import uploadModel from "../model/csv.model.js";
 import fs from "fs"
 import path from "path";
 import csvParser from "csv-parser";
+import { fileURLToPath } from "url";
 
 export default class csvController {
     constructor() {
@@ -55,8 +56,11 @@ export default class csvController {
             // Delete the file from the database
             await uploadModel.findByIdAndDelete(fileId);
 
+            const __filename = fileURLToPath(import.meta.url)
+            const __dirname = path.dirname(__filename)
+
             // Construct the file path
-            const filePath = path.join('uploads', file.filename);
+            const filePath = path.join(__dirname,'uploads', file.filename);
 
             // Delete the file from the filesystem
             fs.unlink(filePath, (err) => {
