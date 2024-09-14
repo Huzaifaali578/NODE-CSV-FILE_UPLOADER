@@ -38,9 +38,10 @@ async function fetchUploadedFiles() {
         const files = await response.json();
 
         if (files.length === 0) {
-            uploadedFilesList.innerHTML = '<tr><td colspan="2">No files uploaded yet.</td></tr>';
+            document.getElementById('upload-section').style.display = 'none';
             return;
         }
+        document.getElementById('upload-section').style.display = 'block';
 
         uploadedFilesList.innerHTML = '';
 

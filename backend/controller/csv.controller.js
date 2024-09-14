@@ -27,15 +27,17 @@ export default class csvController {
         }
     }
 
-    async getUploadFiles() {
+    async getUploadFiles(req, res, next) {
         try {
-            const files = await uploadModel.find({}, { filename: 1, path: 1, size: 1 });
-            return files;  // Return files instead of sending a response
+
+            // get all the file from db.
+            const files = await uploadModel.find({}, { filename: 1, filePath: 1, size: 1 })
+            return files
         } catch (err) {
-            console.log(err);
-            throw new Error("Failed to fetch uploaded files");  // Throw the error to handle in route
+            console.log(err)
+            throw new Error("Failed to fetch uploaded files")
         }
-    }
+    };
     
 
     async deleteFile(req, res, next) {
