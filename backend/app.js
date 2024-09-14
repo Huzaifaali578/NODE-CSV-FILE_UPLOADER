@@ -43,7 +43,9 @@ app.get('/view', (req, res) => {
 app.get('/download/:fileName', (req, res) => {
     const fileName = req.params.fileName;
     console.log(fileName)
-    const filePath = path.join(__dirname, 'uploads', fileName);
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirName = path.dirname(__filename);
+    const filePath = path.join(__dirName, 'uploads', fileName);
     console.log(filePath)
 
 
