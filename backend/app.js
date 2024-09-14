@@ -45,7 +45,7 @@ app.get('/download/:fileName', (req, res) => {
     console.log(fileName)
     const __filename = fileURLToPath(import.meta.url);
     const __dirName = path.dirname(__filename);
-    const filePath = path.join(__dirName, 'uploads', fileName);
+    const filePath = path.join(__dirName,'middleware', 'uploads', fileName);
     console.log(filePath)
 
 
