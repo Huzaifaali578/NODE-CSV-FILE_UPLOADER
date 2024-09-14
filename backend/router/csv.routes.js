@@ -14,13 +14,14 @@ csvRouter.post('/upload', upload.single('csvFile'), (req, res, next) => {
 // route for fetching all the file from db.
 csvRouter.get('/home', async (req, res, next) => {
     try {
-        const files = await controller.getUploadFiles(req, res, next);
-        res.json(files)
+        const files = await controller.getUploadFiles();  // Call the method and get files
+        res.json(files);  // Send the response here in the route
     } catch (err) {
-        console.log(`Error fetching uploaded files: ${err}`);
-        res.status(500).json({ err: 'Failed to fetch uploaded files' })
+        console.log(`Error fetching uploaded files: ${err.message}`);
+        res.status(500).json({ error: 'Failed to fetch uploaded files' });  // Error response
     }
 });
+
 
 // route for delete csv file.
 csvRouter.delete('/delete', (req, res, next) => {
