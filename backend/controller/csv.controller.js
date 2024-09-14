@@ -46,38 +46,38 @@ export default class csvController {
         try {
             // Get the fileId from the request body
             const fileId = req.body.fileId;
-
+    
             // Find the file by ID in the database
             const file = await uploadModel.findById(fileId);
             if (!file) {
                 return res.status(404).json({ error: 'File not found' });
             }
-
+    
             // Delete the file from the database
             await uploadModel.findByIdAndDelete(fileId);
-
-            const __filename = fileURLToPath(import.meta.url)
-            const __dirname = path.dirname(__filename)
-
+    
+            const __filename = fileURLToPath(import.meta.url);
+            const __dirname = path.dirname(__filename);
+    
             // Construct the file path
-            const filePath = path.join(__dirname,'uploads', file.filename);
-
-            // Delete the file from the filesystem
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    console.error('Error deleting file from filesystem:', err);
-                    return res.status(500).json({ error: 'Error deleting file from filesystem' });
-                }
-
-                // Successfully deleted
-                console.log('File deleted successfully:', filePath);
-                res.json({ message: 'File deleted successfully' });
-            });
+            const filePath = path.join(__dirname, 'uploads', file.filename);
+    
+            // Delete the file from the filesystem using fs.promises
+            await fs.unlink(filePath);
+    
+            // Successfully deleted
+            console.log('File deleted successfully:', filePath);
+    
+            // Redirect the user or send a JSON response, but not both
+            res.redirect('/home');
+            // or
+            // res.json({ message: 'File deleted successfully' });
         } catch (err) {
             console.error('Error deleting file:', err);
-            res.status(400).send('Error deleting file');
+            res.status(500).json({ error: 'Error deleting file' });
         }
     };
+    
 
     async readFile(req, res, next) {
         try {
