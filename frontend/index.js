@@ -63,8 +63,19 @@ async function fetchUploadedFiles() {
             viewButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
             viewButton.addEventListener("click", () => viewFile(file._id));
 
+            // const downloadButton = document.createElement("button");
+            // downloadButton.textContent = "Download";
+            // downloadButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+
+            // // Add id and data-file attribute
+            // downloadButton.id = `downloadButton-${file._id}`;
+            // downloadButton.setAttribute("data-file", file._id);
+
+            // downloadButton.addEventListener("click", () => downloadFile(file._id));
+
             actionCell.appendChild(deleteButton);
             actionCell.appendChild(viewButton);
+            // actionCell.appendChild(downloadButton);
 
             row.appendChild(filenameCell);
             row.appendChild(actionCell);
@@ -102,5 +113,10 @@ function viewFile(fileId) {
     const url = `view/?id=${fileId}`;
     window.open(url, '_blank');
 }
+
+// function downloadFile(fileId) {
+//     // Use the passed fileId directly
+//     window.location.href = `/download/${fileId}`; // Trigger the download
+// }
 
 fetchUploadedFiles();
