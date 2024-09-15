@@ -70,6 +70,20 @@
       }
 
       /* Table */
+      .table-wrapper {
+        max-height: 400px; /* Limit the height of the table */
+        overflow-x: auto; /* Allow horizontal scrolling */
+        overflow-y: auto; /* Allow vertical scrolling */
+      }
+
+      /* Sticky headers for large tables */
+      thead th {
+        position: sticky;
+        top: 0;
+        background-color: #ffcc00; /* Same as your header background */
+        z-index: 2;
+      }
+
       .table {
         border-collapse: collapse;
         width: 100%;
@@ -166,7 +180,7 @@
           <div class="btn-group" role="group">
             <button
               type="button"
-              class="btn btn-primary"   
+              class="btn btn-primary"
               id="downloadButton"
               data-file="<%= title %>"
             >
@@ -194,24 +208,26 @@
         </div>
       </form>
       <!-- Table to Show CSV Data -->
-      <table class="table table-striped table-bordered bg-light">
-        <thead>
-          <tr>
-            <% for (let header of tableHeaders) { %>
-            <th><%= header %></th>
+      <div class="table-wrapper">
+        <table class="table table-striped table-bordered bg-light">
+          <thead>
+            <tr>
+              <% for (let header of tableHeaders) { %>
+              <th><%= header %></th>
+              <% } %>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <% for (let row of tableRows) { %>
+            <tr class="table-row">
+              <% for (let header of tableHeaders) { %>
+              <td><%= row[header] %></td>
+              <% } %>
+            </tr>
             <% } %>
-          </tr>
-        </thead>
-        <tbody id="table-body">
-          <% for (let row of tableRows) { %>
-          <tr class="table-row">
-            <% for (let header of tableHeaders) { %>
-            <td><%= row[header] %></td>
-            <% } %>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
       <div class="text-center mt-4">
         <a href="/" class="btn btn-primary">
           <i class="bi bi-house me-2"></i> Back to Homepage
@@ -275,7 +291,7 @@
       });
 
       // pagination functionality
-      const itemsPerPage = 10; // Number of rows per page
+      const itemsPerPage = 50; // Number of rows per page
       let currentPage = 1; // Current page number
 
       // Reference to the table rows
