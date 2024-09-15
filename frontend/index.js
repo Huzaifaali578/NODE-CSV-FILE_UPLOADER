@@ -103,6 +103,7 @@ async function deleteFile(fileId) {
             } else {
                 console.log('Failed to delete file');
             }
+            fetchUploadedFiles()
         }
     } catch (err) {
         console.log(`Error deleting file: ${err}`);
